@@ -12,6 +12,7 @@ use function Pest\Laravel\json;
 class PostController extends Controller
 {
     use ApiResponseTrait;
+
    public function index(){
        $posts=PostResource::collection(Post::get());
 
@@ -63,20 +64,35 @@ class PostController extends Controller
   }
 
 
-  public function destroy($id){
+    public function destroy($id){
 
-       $post=Post::where('id',$id)->delete();
 
-       if ($post){
+           $post=Post::where('id',$id)->delete();
+           if ($post){
 
-           return $this->ShowResponse(null,"تمت العملية بنجاح",250);
-       }
+               return $this->ShowResponse(null,"تمت العملية بنجاح",250);
+           }
 
-      return $this->ShowResponse(null,"فشلت العملية ",240);
 
-  }
+        return $this->ShowResponse(null,"فشلت العملية ",240);
+
+    }
+
+
+
 
   public function update(Request $request,$id){
+
+           $Validator=   Validator::make($request->all(),[
+                 'title'=>['required'],
+                 'body'=>['required'],
+              ]);
+
+
+           if ($Validator->fails()){
+               return $this->ShowResponse(null,$Validator->errors(),280);
+
+           }
 
        $post=Post::where('id',$id)->update($request->all());
       if ($post){
@@ -88,4 +104,7 @@ class PostController extends Controller
 
 
   }
+
+
+
 }
